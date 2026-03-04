@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Happy Birthday!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:       #fdf6ee;
+    --warm-white:  #fffaf4;
+    --blush:       #f2d4c8;
+    --rose:        #d4896a;
+    --dusty-rose:  #c47a5a;
+    --sage:        #a8bc9a;
+    --sage-dark:   #7a9470;
+    --butter:      #f0d878;
+    --butter-dark: #c8aa40;
+    --lavender:    #c8b8d8;
+    --brown:       #5a3e2b;
+    --brown-light: #8a6a50;
+    --shadow:      rgba(90, 62, 43, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Quicksand', sans-serif;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Confetti ── */
+  .confetti-wrap { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+  .petal { position: absolute; top: -40px; opacity: 0; animation: drift linear infinite; }
+  @keyframes drift {
+    0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+    5%   { opacity: 0.7; }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(110vh) rotate(480deg) translateX(40px); opacity: 0; }
+  }
+
+  /* ── Border frame ── */
+  .frame { position: fixed; inset: 16px; border: 1.5px solid #d4b898; border-radius: 24px; pointer-events: none; z-index: 2; }
+  .frame::before { content: ''; position: absolute; inset: 4px; border: 1px solid #e8d4bc; border-radius: 20px; opacity: 0.5; }
+
+  /* ── Screens ── */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 10; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: all; }
+
+  /* ══════════════════════════════
+     LANDING SCREEN
+  ══════════════════════════════ */
+  .card {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 36px 52px;
+    max-width: 380px; width: 90%; text-align: center;
+  }
+
+  .cake-wrap {
+    margin-bottom: 24px;
+    animation: cakeBob 4s ease-in-out infinite;
+    animation-delay: 1.4s;
+    filter: drop-shadow(0 8px 16px var(--shadow));
+  }
+  @keyframes cakeBob {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  .flame-outer-l { transform-origin: 50.5px 38px; animation: flicker 1.8s ease-in-out infinite alternate; }
+  .flame-inner-l { transform-origin: 50.5px 38px; animation: flicker 1.4s ease-in-out infinite alternate; animation-delay: 0.2s; }
+  .flame-outer-c { transform-origin: 70.5px 32px; animation: flicker 2.1s ease-in-out infinite alternate; animation-delay: 0.4s; }
+  .flame-inner-c { transform-origin: 70.5px 32px; animation: flicker 1.6s ease-in-out infinite alternate; animation-delay: 0.1s; }
+  .flame-outer-r { transform-origin: 90.5px 38px; animation: flicker 1.9s ease-in-out infinite alternate; animation-delay: 0.6s; }
+  .flame-inner-r { transform-origin: 90.5px 38px; animation: flicker 1.5s ease-in-out infinite alternate; animation-delay: 0.3s; }
+  @keyframes flicker {
+    0%   { transform: scaleY(1)    scaleX(1)    rotate(-1.5deg); opacity: 0.95; }
+    50%  { transform: scaleY(0.92) scaleX(1.06) rotate(1deg);    opacity: 1; }
+    100% { transform: scaleY(1.08) scaleX(0.94) rotate(1.5deg);  opacity: 0.88; }
+  }
+
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--rose); margin-bottom: 10px;
+    opacity: 0; animation: fadeUp 0.8s ease forwards; animation-delay: 0.6s;
+  }
+  .name {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+    font-size: clamp(2.4rem, 9vw, 3.2rem); color: var(--brown); line-height: 1.1;
+    margin-bottom: 6px; opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 0.8s;
+  }
+  .subtitle {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(1rem, 3.5vw, 1.2rem); color: var(--brown-light);
+    margin-bottom: 36px; opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 1s;
+  }
+  .dots {
+    display: flex; gap: 8px; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s ease forwards; animation-delay: 1.1s;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  .btn-start {
+    position: relative; background: #c8b8d8; color: var(--warm-white);
+    border: none; border-radius: 100px; padding: 20px 48px;
+    font-family: 'Quicksand', sans-serif; font-size: 1.1rem; font-weight: 600;
+    letter-spacing: 0.06em; cursor: pointer;
+    box-shadow: 0 4px 0 #a898c0, 0 8px 24px rgba(168,152,192,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: 1.2s;
+    min-width: 220px; min-height: 64px;
+  }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 1px 0 #a898c0, 0 4px 12px rgba(168,152,192,0.3); }
+  .btn-start::after {
+    content: ''; position: absolute; inset: 0; border-radius: 100px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .btn-start.ready { animation: fadeUp 1s ease forwards, gentlePulse 3s ease-in-out 2.5s infinite; }
+  @keyframes gentlePulse {
+    0%, 100% { box-shadow: 0 4px 0 #a898c0, 0 8px 24px rgba(168,152,192,0.35); }
+    50%       { box-shadow: 0 4px 0 #a898c0, 0 12px 36px rgba(168,152,192,0.5); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════════════
+     THEME PICKER SCREEN
+  ══════════════════════════════ */
+  #screen-theme {
+    justify-content: flex-start;
+    padding: 44px 24px 32px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .theme-heading {
+    font-family: 'Playfair Display', serif;
+    font-style: italic; font-weight: 700;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    color: var(--brown); text-align: center;
+    margin-bottom: 24px; flex-shrink: 0; width: 100%;
+  }
+
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%; max-width: 400px;
+    padding-bottom: 40px;
+  }
+
+  .theme-btn {
+    background: var(--warm-white);
+    border: 1.5px solid #e8d4bc;
+    border-radius: 18px;
+    padding: 16px 12px 12px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    box-shadow: 0 2px 8px var(--shadow);
+    min-height: 110px;
+    -webkit-user-select: none; user-select: none;
+  }
+  .theme-btn:active {
+    transform: scale(0.93);
+    box-shadow: 0 1px 4px var(--shadow);
+    border-color: #c8b8d8;
+    background: #f5eef8;
+  }
+  .theme-emoji { font-size: 2.8rem; line-height: 1; }
+  .theme-label {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600; font-size: 0.85rem;
+    color: var(--brown); letter-spacing: 0.03em;
+  }
+
+  /* ══════════════════════════════
+     PUZZLE SCREEN
+  ══════════════════════════════ */
+  #screen-puzzle {
+    justify-content: flex-start;
+    padding: 36px 20px 24px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .puzzle-header {
+    width: 100%; max-width: 420px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-shrink: 0;
+  }
+
+  .puzzle-theme-label {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.3rem; color: var(--brown);
+  }
+
+  .puzzle-progress {
+    font-family: 'Quicksand', sans-serif; font-size: 0.8rem;
+    font-weight: 600; color: var(--brown-light);
+    letter-spacing: 0.1em;
+  }
+
+  /* Card grid */
+  .card-grid {
+    display: grid;
+    gap: 12px;
+    width: 100%; max-width: 420px;
+  }
+  .card-grid.pairs-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid.pairs-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* Individual card */
+  .mem-card {
+    aspect-ratio: 1;
+    cursor: pointer;
+    perspective: 600px;
+    -webkit-user-select: none; user-select: none;
+  }
+
+  .mem-card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 14px;
+  }
+
+  .mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
+  .mem-card.matched .mem-card-inner { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute; inset: 0;
+    border-radius: 14px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Card back (face-down) */
+  .card-back {
+    background: var(--blush);
+    border: 2px solid #d4a890;
+    box-shadow: 0 3px 10px rgba(212,168,144,0.3);
+    overflow: hidden;
+  }
+
+  /* Card front (face-up) */
+  .card-front {
+    background: var(--warm-white);
+    border: 2px solid #e8d4bc;
+    box-shadow: 0 3px 10px var(--shadow);
+    transform: rotateY(180deg);
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+  }
+
+  .mem-card.matched .card-front {
+    background: #f0f8ec;
+    border-color: var(--sage);
+    box-shadow: 0 3px 12px rgba(168,188,154,0.35);
+  }
+
+  .mem-card.matched .card-back {
+    background: #d4e8cc;
+    border-color: var(--sage-dark);
+  }
+
+  /* Shake on mismatch */
+  @keyframes shake {
+    0%, 100% { transform: rotateY(180deg) translateX(0); }
+    20%       { transform: rotateY(180deg) translateX(-5px); }
+    40%       { transform: rotateY(180deg) translateX(5px); }
+    60%       { transform: rotateY(180deg) translateX(-4px); }
+    80%       { transform: rotateY(180deg) translateX(4px); }
+  }
+  .mem-card.mismatch .mem-card-inner {
+    animation: shake 0.4s ease;
+  }
+
+  /* Pop on match */
+  @keyframes matchPop {
+    0%   { transform: rotateY(180deg) scale(1); }
+    40%  { transform: rotateY(180deg) scale(1.12); }
+    100% { transform: rotateY(180deg) scale(1); }
+  }
+  .mem-card.matched .mem-card-inner {
+    animation: matchPop 0.35s ease forwards;
+  }
+
+  /* ══════════════════════════════
+     ADMIN PANEL
+  ══════════════════════════════ */
+  #admin-overlay {
+    position: fixed; inset: 0;
+    background: rgba(90, 62, 43, 0.45);
+    z-index: 200;
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #admin-overlay.open { opacity: 1; pointer-events: all; }
+
+  #admin-panel {
+    background: var(--warm-white);
+    border-radius: 28px 28px 0 0;
+    padding: 28px 28px 48px;
+    width: 100%; max-width: 480px;
+    max-height: 88vh; overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+    box-shadow: 0 -8px 32px rgba(90,62,43,0.15);
+  }
+  #admin-overlay.open #admin-panel { transform: translateY(0); }
+
+  .admin-handle { width: 40px; height: 4px; background: #e8d4bc; border-radius: 2px; margin: 0 auto 24px; }
+
+  .admin-title {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.4rem; color: var(--brown);
+    margin-bottom: 20px; text-align: center;
+  }
+
+  .admin-field { margin-bottom: 16px; }
+  .admin-label {
+    display: block; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--brown-light); margin-bottom: 6px;
+  }
+  .admin-input {
+    width: 100%; padding: 12px 16px;
+    background: var(--cream); border: 1.5px solid #e8d4bc;
+    border-radius: 12px; font-family: 'Quicksand', sans-serif;
+    font-size: 1rem; color: var(--brown); outline: none;
+    transition: border-color 0.2s;
+  }
+  .admin-input:focus { border-color: var(--rose); }
+
+  .admin-row { display: flex; gap: 12px; }
+  .admin-row .admin-field { flex: 1; }
+
+  .admin-save {
+    width: 100%; padding: 16px;
+    background: var(--rose); color: white;
+    border: none; border-radius: 100px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1rem; font-weight: 600; letter-spacing: 0.06em;
+    cursor: pointer; margin-top: 8px;
+    box-shadow: 0 4px 0 var(--dusty-rose);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .admin-save:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--dusty-rose); }
+
+  .admin-close {
+    width: 100%; padding: 14px; margin-top: 10px;
+    background: transparent; color: var(--brown-light);
+    border: 1.5px solid #e8d4bc; border-radius: 100px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  }
+
+  .admin-saved-note {
+    text-align: center; font-size: 0.8rem;
+    color: var(--sage-dark); margin-top: 12px;
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .admin-saved-note.show { opacity: 1; }
+
+  #admin-password-gate { display: flex; flex-direction: column; gap: 12px; }
+  #admin-password-gate p {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    color: var(--brown-light); font-size: 0.95rem; text-align: center;
+  }
+  #admin-password-error { color: var(--rose); font-size: 0.8rem; text-align: center; min-height: 18px; }
+
+  /* ── Admin trigger ── */
+  #admin-trigger {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 44px; height: 44px; z-index: 100;
+    cursor: default; -webkit-user-select: none; user-select: none;
+  }
+  .tap-counter {
+    position: fixed; bottom: 20px; right: 20px;
+    font-size: 0.65rem; color: var(--brown-light); opacity: 0;
+    font-family: 'Quicksand', sans-serif; letter-spacing: 0.1em;
+    z-index: 101; transition: opacity 0.3s; pointer-events: none;
+  }
+
+  /* ══════════════════════════════
+     REWARD SCREEN
+  ══════════════════════════════ */
+  #screen-reward {
+    justify-content: center;
+    padding: 36px 28px 48px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reward-inner {
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+    max-width: 360px; width: 100%;
+  }
+
+  .gift-wrap {
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: transform 0.15s ease;
+    filter: drop-shadow(0 8px 18px var(--shadow));
+    -webkit-user-select: none; user-select: none;
+  }
+  .gift-wrap:active { transform: scale(0.93); }
+  .gift-wrap.unwrapped { cursor: default; pointer-events: none; }
+
+  @keyframes giftBob {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-7px); }
+  }
+  .gift-wrap.bobbing { animation: giftBob 3s ease-in-out infinite; }
+
+  @keyframes giftPop {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.18) rotate(-4deg); }
+    55%  { transform: scale(0.92) rotate(2deg); }
+    75%  { transform: scale(1.06) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  .gift-wrap.popping { animation: giftPop 0.5s ease forwards; }
+
+  .tap-hint {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--brown-light); margin-bottom: 24px;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .tap-hint.visible { opacity: 1; }
+
+  .amount-reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    margin-bottom: 20px;
+  }
+  .amount-reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .amount-label {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 6px;
+  }
+  .amount-value {
+    font-family: 'Playfair Display', serif; font-weight: 700; font-style: italic;
+    font-size: clamp(3rem, 14vw, 4.2rem);
+    color: var(--brown); line-height: 1;
+  }
+
+  .word-reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; margin-bottom: 24px;
+  }
+  .word-reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .word-emoji { font-size: 3rem; line-height: 1; }
+
+  .word-value {
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    color: var(--brown); letter-spacing: 0.08em;
+    background: var(--butter);
+    padding: 8px 28px; border-radius: 100px;
+    border: 2px solid var(--butter-dark);
+  }
+
+  .reward-message {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+    color: var(--brown-light); line-height: 1.6;
+    max-width: 300px;
+  }
+  .reward-message.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════════════════════════════
+     BURST CONFETTI (end of game)
+  ══════════════════════════════ */
+  .burst-petal {
+    position: fixed;
+    pointer-events: none;
+    z-index: 500;
+    border-radius: 50%;
+    animation: burst linear forwards;
+  }
+  @keyframes burst {
+    0%   { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: var(--tx) rotate(720deg) scale(0.4); }
+  }
+</style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confetti"></div>
+<div class="frame"></div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1 — LANDING
+══════════════════════════════════════ -->
+<div class="screen active" id="screen-landing">
+  <div class="card">
+
+    <div class="cake-wrap">
+      <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+        <ellipse cx="70" cy="122" rx="38" ry="6" fill="#d4b898" opacity="0.25"/>
+        <rect x="24" y="82" width="92" height="36" rx="10" fill="#f2d4c8" stroke="#d4a890" stroke-width="1.5"/>
+        <path d="M24 92 Q33 82 42 92 Q51 82 60 92 Q69 82 78 92 Q87 82 96 92 Q105 82 114 92 L116 88 Q107 78 98 88 Q89 78 80 88 Q71 78 62 88 Q53 78 44 88 Q35 78 26 88 Z" fill="white" opacity="0.55"/>
+        <circle cx="40" cy="104" r="3.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+        <circle cx="55" cy="100" r="2.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+        <circle cx="70" cy="105" r="3.5" fill="#c8b8d8" stroke="#a898c0" stroke-width="1"/>
+        <circle cx="85" cy="100" r="2.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+        <circle cx="100" cy="104" r="3.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+        <rect x="36" y="54" width="68" height="32" rx="8" fill="#fde8e0" stroke="#d4a890" stroke-width="1.5"/>
+        <path d="M36 64 Q44 54 52 64 Q60 54 68 64 Q76 54 84 64 Q92 54 100 64 L104 60 Q96 50 88 60 Q80 50 72 60 Q64 50 56 60 Q48 50 40 60 Z" fill="white" opacity="0.55"/>
+        <line x1="48" y1="72" x2="53" y2="74" stroke="#d4896a" stroke-width="2" stroke-linecap="round"/>
+        <line x1="62" y1="76" x2="67" y2="74" stroke="#a8bc9a" stroke-width="2" stroke-linecap="round"/>
+        <line x1="76" y1="72" x2="81" y2="74" stroke="#f0d878" stroke-width="2" stroke-linecap="round"/>
+        <line x1="55" y1="80" x2="60" y2="78" stroke="#c8b8d8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="82" y1="78" x2="87" y2="80" stroke="#d4896a" stroke-width="2" stroke-linecap="round"/>
+        <rect x="46" y="36" width="9" height="20" rx="4" fill="#a8bc9a" stroke="#7a9470" stroke-width="1.5"/>
+        <rect x="66" y="30" width="9" height="26" rx="4" fill="#f2d4c8" stroke="#d4a890" stroke-width="1.5"/>
+        <rect x="86" y="36" width="9" height="20" rx="4" fill="#c8b8d8" stroke="#a898c0" stroke-width="1.5"/>
+        <line x1="46" y1="44" x2="55" y2="44" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <line x1="46" y1="50" x2="55" y2="50" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <line x1="66" y1="40" x2="75" y2="40" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <line x1="66" y1="46" x2="75" y2="46" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <line x1="86" y1="44" x2="95" y2="44" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <line x1="86" y1="50" x2="95" y2="50" stroke="white" stroke-width="1.5" opacity="0.5"/>
+        <ellipse class="flame-outer-l" cx="50.5" cy="33" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+        <ellipse class="flame-inner-l" cx="50.5" cy="32" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+        <ellipse class="flame-outer-c" cx="70.5" cy="27" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+        <ellipse class="flame-inner-c" cx="70.5" cy="26" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+        <ellipse class="flame-outer-r" cx="90.5" cy="33" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+        <ellipse class="flame-inner-r" cx="90.5" cy="32" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+        <ellipse cx="50.5" cy="36" rx="5" ry="2" fill="#f5c842" opacity="0.2"/>
+        <ellipse cx="70.5" cy="30" rx="5" ry="2" fill="#f5c842" opacity="0.2"/>
+        <ellipse cx="90.5" cy="36" rx="5" ry="2" fill="#f5c842" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="eyebrow">it's your special day</div>
+    <div class="name" id="display-name">Happy Birthday!</div>
+    <div class="subtitle">
+      <svg width="18" height="16" viewBox="0 0 18 16" fill="none" style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:2px;">
+        <path d="M9 14.5C9 14.5 1 9.5 1 4.5C1 2.5 2.5 1 4.5 1C6 1 7.5 2 9 3.5C10.5 2 12 1 13.5 1C15.5 1 17 2.5 17 4.5C17 9.5 9 14.5 9 14.5Z" fill="#fde8e0" stroke="#d4a890" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>Love, Auntie
+    </div>
+    <div class="dots">
+      <div class="dot" style="background:#f2d4c8"></div>
+      <div class="dot" style="background:#f0d878"></div>
+      <div class="dot" style="background:#a8bc9a"></div>
+      <div class="dot" style="background:#c8b8d8"></div>
+      <div class="dot" style="background:#f2d4c8"></div>
+    </div>
+    <button class="btn-start ready" id="btn-play">Play</button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 2 — THEME PICKER
+══════════════════════════════════════ -->
+<div class="screen" id="screen-theme">
+  <div class="theme-heading">Choose a theme.</div>
+  <div class="theme-grid">
+
+    <button class="theme-btn" data-theme="ocean">
+      <span class="theme-emoji">🌊</span>
+      <span class="theme-label">Ocean</span>
+    </button>
+
+    <button class="theme-btn" data-theme="forest">
+      <span class="theme-emoji">🌲</span>
+      <span class="theme-label">Forest</span>
+    </button>
+
+    <button class="theme-btn" data-theme="space">
+      <span class="theme-emoji">🚀</span>
+      <span class="theme-label">Space</span>
+    </button>
+
+    <button class="theme-btn" data-theme="garden">
+      <span class="theme-emoji">🌸</span>
+      <span class="theme-label">Garden</span>
+    </button>
+
+    <button class="theme-btn" data-theme="safari">
+      <span class="theme-emoji">🦁</span>
+      <span class="theme-label">Safari</span>
+    </button>
+
+    <button class="theme-btn" data-theme="fairytale">
+      <span class="theme-emoji">🏰</span>
+      <span class="theme-label">Fairy Tale</span>
+    </button>
+
+    <button class="theme-btn" data-theme="sweets">
+      <span class="theme-emoji">🍓</span>
+      <span class="theme-label">Sweet Shop</span>
+    </button>
+
+    <button class="theme-btn" data-theme="animals">
+      <span class="theme-emoji">🐾</span>
+      <span class="theme-label">Animals</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3 — PUZZLE
+══════════════════════════════════════ -->
+<div class="screen" id="screen-puzzle">
+  <div class="puzzle-header">
+    <div class="puzzle-theme-label" id="puzzle-theme-label">Ocean</div>
+    <div class="puzzle-progress" id="puzzle-progress">0 / 3</div>
+  </div>
+  <div class="card-grid" id="card-grid"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 4 — REWARD REVEAL
+══════════════════════════════════════ -->
+<div class="screen" id="screen-reward">
+  <div class="reward-inner">
+
+    <!-- Gift box SVG — tappable -->
+    <div class="gift-wrap bobbing" id="gift-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
+        <!-- Shadow -->
+        <ellipse cx="80" cy="148" rx="44" ry="7" fill="#d4b898" opacity="0.2"/>
+        <!-- Box body -->
+        <rect x="22" y="80" width="116" height="68" rx="10" fill="#fde8e0" stroke="#d4a890" stroke-width="1.5"/>
+        <!-- Box body sheen -->
+        <path d="M22 90 Q36 80 50 90 Q64 80 78 90 Q92 80 106 90 Q120 80 134 90 L138 86 Q124 76 110 86 Q96 76 82 86 Q68 76 54 86 Q40 76 26 86 Z" fill="white" opacity="0.45"/>
+        <!-- Box dots decoration -->
+        <circle cx="44" cy="110" r="3.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+        <circle cx="62" cy="106" r="2.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+        <circle cx="80" cy="112" r="3.5" fill="#c8b8d8" stroke="#a898c0" stroke-width="1"/>
+        <circle cx="98" cy="106" r="2.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+        <circle cx="116" cy="110" r="3.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+        <!-- Vertical center stripe -->
+        <rect x="72" y="80" width="16" height="68" rx="0" fill="#d4896a" opacity="0.25"/>
+        <!-- Lid -->
+        <rect x="16" y="58" width="128" height="26" rx="8" fill="#f2d4c8" stroke="#d4a890" stroke-width="1.5"/>
+        <!-- Lid sheen -->
+        <path d="M16 68 Q28 58 40 68 Q52 58 64 68 Q76 58 88 68 Q100 58 112 68 Q124 58 136 68 L144 64 Q132 54 120 64 Q108 54 96 64 Q84 54 72 64 Q60 54 48 64 Q36 54 24 64 Z" fill="white" opacity="0.45"/>
+        <!-- Horizontal lid stripe -->
+        <rect x="16" y="68" width="128" height="6" rx="0" fill="#d4896a" opacity="0.2"/>
+        <!-- Ribbon vertical on lid -->
+        <rect x="72" y="58" width="16" height="26" rx="0" fill="#d4896a" opacity="0.3"/>
+        <!-- Bow left loop -->
+        <path d="M80 58 Q58 38 50 46 Q44 52 62 58Z" fill="#d4896a" stroke="#b86a40" stroke-width="1.2" stroke-linejoin="round"/>
+        <!-- Bow right loop -->
+        <path d="M80 58 Q102 38 110 46 Q116 52 98 58Z" fill="#d4896a" stroke="#b86a40" stroke-width="1.2" stroke-linejoin="round"/>
+        <!-- Bow center knot -->
+        <ellipse cx="80" cy="58" rx="8" ry="6" fill="#e8a07a" stroke="#b86a40" stroke-width="1.2"/>
+        <!-- Ribbon tails -->
+        <path d="M76 58 Q70 68 66 72" stroke="#d4896a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M84 58 Q90 68 94 72" stroke="#d4896a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <!-- Small stars / sparkles -->
+        <circle cx="36" cy="50" r="1.5" fill="#f0d878"/>
+        <circle cx="124" cy="48" r="1.5" fill="#f0d878"/>
+        <circle cx="130" cy="62" r="1" fill="#c8b8d8"/>
+        <circle cx="30" cy="66" r="1" fill="#c8b8d8"/>
+      </svg>
+    </div>
+
+    <div class="tap-hint" id="tap-hint">tap to open</div>
+
+    <div class="amount-reveal" id="amount-reveal">
+      <div class="amount-label">your birthday money</div>
+      <div class="amount-value" id="reward-amount">$25</div>
+    </div>
+
+    <div class="word-reveal" id="word-reveal">
+      <div class="word-emoji" id="reward-emoji">🌟</div>
+      <div class="word-value" id="reward-word">SUNSHINE</div>
+    </div>
+
+    <div class="reward-message" id="reward-message">
+      Tell Auntie your secret word and she'll send your birthday money! 💛
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN OVERLAY
+══════════════════════════════════════ -->
+<div id="admin-overlay">
+  <div id="admin-panel">
+    <div class="admin-handle"></div>
+
+    <div id="admin-password-gate">
+      <div class="admin-title">Auntie's Setup ✨</div>
+      <p>Enter your password to make changes.</p>
+      <input class="admin-input" type="password" id="admin-password-input" placeholder="Password" autocomplete="off"/>
+      <div id="admin-password-error"></div>
+      <button class="admin-save" id="admin-password-btn">Enter</button>
+      <button class="admin-close" id="admin-cancel-btn">Cancel</button>
+    </div>
+
+    <div id="admin-form" style="display:none;">
+      <div class="admin-title">Auntie's Setup ✨</div>
+
+      <div class="admin-row">
+        <div class="admin-field">
+          <label class="admin-label">Kid's Name</label>
+          <input class="admin-input" type="text" id="field-name" placeholder="e.g. Milo" autocomplete="off"/>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Age</label>
+          <input class="admin-input" type="number" id="field-age" placeholder="5" min="4" max="7"/>
+        </div>
+      </div>
+
+      <div class="admin-row">
+        <div class="admin-field" style="flex:2">
+          <label class="admin-label">Secret Word</label>
+          <input class="admin-input" type="text" id="field-word" placeholder="e.g. SUNSHINE" autocomplete="off"/>
+        </div>
+        <div class="admin-field" style="flex:1">
+          <label class="admin-label">Emoji</label>
+          <input class="admin-input" type="text" id="field-emoji" placeholder="☀️" autocomplete="off" style="text-align:center; font-size:1.3rem;"/>
+        </div>
+      </div>
+
+      <div class="admin-field">
+        <label class="admin-label">Venmo Amount</label>
+        <input class="admin-input" type="text" id="field-amount" placeholder="e.g. $25" autocomplete="off"/>
+      </div>
+
+      <button class="admin-save" id="admin-save-btn">Save ✓</button>
+      <button class="admin-close" id="admin-close-btn">Close</button>
+      <div class="admin-saved-note" id="admin-saved-note">Saved! Ready for them. 🎉</div>
+    </div>
+  </div>
+</div>
+
+<div id="admin-trigger"></div>
+<div class="tap-counter" id="tap-counter"></div>
+
+<script>
+  const ADMIN_PASSWORD = 'auntie';
+
+  // ── Theme bundles ──
+  const THEMES = {
+    ocean:     { label: 'Ocean 🌊',     emoji: ['🐟','🦀','🐳','🦑','🐚','🪸'] },
+    forest:    { label: 'Forest 🌲',    emoji: ['🦊','🍄','🦉','🐰','🦔','🌲'] },
+    space:     { label: 'Space 🚀',     emoji: ['🚀','🌙','⭐','🪐','👩‍🚀','☄️'] },
+    garden:    { label: 'Garden 🌸',    emoji: ['🦋','🐝','🌸','🪴','🐌','🐞'] },
+    safari:    { label: 'Safari 🦁',    emoji: ['🦁','🐘','🦒','🦓','🦜','🦛'] },
+    fairytale: { label: 'Fairy Tale 🏰',emoji: ['🏰','🐉','👑','🪄','🦄','🐸'] },
+    sweets:    { label: 'Sweet Shop 🍓',emoji: ['🎂','🧁','🍦','🍪','🍓','🍭'] },
+    animals:   { label: 'Animals 🐾',   emoji: ['🐶','🐱','🐷','🦋','🐟','🐢'] },
+  };
+
+  // ── Load state ──
+  const state = JSON.parse(localStorage.getItem('birthdayPuzzle') || '{}');
+
+  function applyState() {
+    const el = document.getElementById('display-name');
+    el.innerHTML = state.name
+      ? `Happy Birthday,<br>${state.name}!`
+      : `Happy Birthday!`;
+  }
+  applyState();
+
+  // ── Confetti (ambient drift) ──
+  const confettiWrap = document.getElementById('confetti');
+  const colors = ['#f2d4c8','#f0d878','#a8bc9a','#c8b8d8','#d4896a','#fde8e0','#e8c8b0'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const size = 6 + Math.random() * 10;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${size}px;
+      height:${size*(0.6+Math.random()*0.8)}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${9+Math.random()*14}s;
+      animation-delay:${Math.random()*12}s;
+      border-radius:${Math.random()>0.5?'50% 10% 50% 10%':'50%'};
+      opacity:0;
+    `;
+    confettiWrap.appendChild(p);
+  }
+
+  // ── Screen transitions ──
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ── Play → theme picker ──
+  document.getElementById('btn-play').addEventListener('click', () => showScreen('screen-theme'));
+
+  // ── Theme buttons → start puzzle ──
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const themeKey = btn.dataset.theme;
+      startPuzzle(themeKey);
+    });
+  });
+
+  // ══════════════════════════════
+  // PUZZLE ENGINE
+  // ══════════════════════════════
+  let puzzleState = {
+    pairs: 0,
+    matched: 0,
+    flipped: [],   // [cardEl, cardEl]
+    locked: false,
+  };
+
+  function startPuzzle(themeKey) {
+    const theme = THEMES[themeKey];
+    const age = parseInt(state.age) || 5;
+    const pairCount = (age >= 6) ? 4 : 3;
+
+    // Label
+    document.getElementById('puzzle-theme-label').textContent = theme.label;
+    document.getElementById('puzzle-progress').textContent = `0 / ${pairCount}`;
+
+    // Pick random pairs from bundle
+    const pool = [...theme.emoji];
+    shuffle(pool);
+    const chosen = pool.slice(0, pairCount);
+
+    // Duplicate + shuffle
+    const cards = [...chosen, ...chosen];
+    shuffle(cards);
+
+    // Grid layout
+    const grid = document.getElementById('card-grid');
+    grid.className = `card-grid pairs-${pairCount}`;
+    grid.innerHTML = '';
+
+    // Reset state
+    puzzleState = { pairs: pairCount, matched: 0, flipped: [], locked: false };
+
+    // Build cards
+    cards.forEach(emoji => {
+      const card = document.createElement('div');
+      card.className = 'mem-card';
+      card.dataset.emoji = emoji;
+      card.innerHTML = `
+        <div class="mem-card-inner">
+          <div class="card-face card-back">
+            <svg width="52%" height="52%" viewBox="0 0 140 140" fill="none" opacity="0.55">
+              <rect x="24" y="82" width="92" height="36" rx="10" fill="#f2d4c8" stroke="#d4a890" stroke-width="1.5"/>
+              <path d="M24 92 Q33 82 42 92 Q51 82 60 92 Q69 82 78 92 Q87 82 96 92 Q105 82 114 92 L116 88 Q107 78 98 88 Q89 78 80 88 Q71 78 62 88 Q53 78 44 88 Q35 78 26 88 Z" fill="white" opacity="0.55"/>
+              <circle cx="40" cy="104" r="3.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+              <circle cx="55" cy="100" r="2.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+              <circle cx="70" cy="105" r="3.5" fill="#c8b8d8" stroke="#a898c0" stroke-width="1"/>
+              <circle cx="85" cy="100" r="2.5" fill="#f0d878" stroke="#c8aa40" stroke-width="1"/>
+              <circle cx="100" cy="104" r="3.5" fill="#a8bc9a" stroke="#7a9470" stroke-width="1"/>
+              <rect x="36" y="54" width="68" height="32" rx="8" fill="#fde8e0" stroke="#d4a890" stroke-width="1.5"/>
+              <path d="M36 64 Q44 54 52 64 Q60 54 68 64 Q76 54 84 64 Q92 54 100 64 L104 60 Q96 50 88 60 Q80 50 72 60 Q64 50 56 60 Q48 50 40 60 Z" fill="white" opacity="0.55"/>
+              <line x1="48" y1="72" x2="53" y2="74" stroke="#d4896a" stroke-width="2" stroke-linecap="round"/>
+              <line x1="62" y1="76" x2="67" y2="74" stroke="#a8bc9a" stroke-width="2" stroke-linecap="round"/>
+              <line x1="76" y1="72" x2="81" y2="74" stroke="#f0d878" stroke-width="2" stroke-linecap="round"/>
+              <line x1="55" y1="80" x2="60" y2="78" stroke="#c8b8d8" stroke-width="2" stroke-linecap="round"/>
+              <line x1="82" y1="78" x2="87" y2="80" stroke="#d4896a" stroke-width="2" stroke-linecap="round"/>
+              <rect x="46" y="36" width="9" height="20" rx="4" fill="#a8bc9a" stroke="#7a9470" stroke-width="1.5"/>
+              <rect x="66" y="30" width="9" height="26" rx="4" fill="#f2d4c8" stroke="#d4a890" stroke-width="1.5"/>
+              <rect x="86" y="36" width="9" height="20" rx="4" fill="#c8b8d8" stroke="#a898c0" stroke-width="1.5"/>
+              <ellipse cx="50.5" cy="33" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+              <ellipse cx="50.5" cy="32" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+              <ellipse cx="70.5" cy="27" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+              <ellipse cx="70.5" cy="26" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+              <ellipse cx="90.5" cy="33" rx="4" ry="5.5" fill="#f5c842" opacity="0.95"/>
+              <ellipse cx="90.5" cy="32" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="card-face card-front">${emoji}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => onCardClick(card));
+      grid.appendChild(card);
+    });
+
+    showScreen('screen-puzzle');
+  }
+
+  function onCardClick(card) {
+    if (puzzleState.locked) return;
+    if (card.classList.contains('flipped')) return;
+    if (card.classList.contains('matched')) return;
+    if (puzzleState.flipped.length >= 2) return;
+
+    card.classList.add('flipped');
+    puzzleState.flipped.push(card);
+
+    if (puzzleState.flipped.length === 2) {
+      puzzleState.locked = true;
+      checkMatch();
+    }
+  }
+
+  function checkMatch() {
+    const [a, b] = puzzleState.flipped;
+    const isMatch = a.dataset.emoji === b.dataset.emoji;
+
+    if (isMatch) {
+      // Remove mismatch class if present, add matched
+      setTimeout(() => {
+        a.classList.remove('flipped');
+        b.classList.remove('flipped');
+        a.classList.add('matched');
+        b.classList.add('matched');
+        puzzleState.matched++;
+        puzzleState.flipped = [];
+        puzzleState.locked = false;
+
+        // Update progress
+        document.getElementById('puzzle-progress').textContent =
+          `${puzzleState.matched} / ${puzzleState.pairs}`;
+
+        if (puzzleState.matched === puzzleState.pairs) {
+          setTimeout(onPuzzleComplete, 600);
+        }
+      }, 300);
+    } else {
+      // Shake + flip back
+      setTimeout(() => {
+        a.classList.add('mismatch');
+        b.classList.add('mismatch');
+      }, 200);
+
+      setTimeout(() => {
+        a.classList.remove('flipped', 'mismatch');
+        b.classList.remove('flipped', 'mismatch');
+        puzzleState.flipped = [];
+        puzzleState.locked = false;
+      }, 900);
+    }
+  }
+
+  function onPuzzleComplete() {
+    fireBurst();
+    setTimeout(() => {
+      // Populate reward screen with saved state
+      document.getElementById('reward-amount').textContent = state.amount || '$??';
+      document.getElementById('reward-word').textContent   = state.word   || '???';
+      document.getElementById('reward-emoji').textContent  = state.emoji  || '🎁';
+
+      // Reset reveal state
+      document.getElementById('amount-reveal').classList.remove('visible');
+      document.getElementById('word-reveal').classList.remove('visible');
+      document.getElementById('reward-message').classList.remove('visible');
+      document.getElementById('tap-hint').classList.remove('visible');
+
+      const giftWrap = document.getElementById('gift-wrap');
+      giftWrap.classList.remove('unwrapped', 'popping');
+      giftWrap.classList.add('bobbing');
+
+      showScreen('screen-reward');
+
+      // Show tap hint after a beat
+      setTimeout(() => {
+        document.getElementById('tap-hint').classList.add('visible');
+      }, 600);
+
+    }, 1000);
+  }
+
+  // Gift tap → unwrap sequence
+  document.getElementById('gift-wrap').addEventListener('click', function() {
+    if (this.classList.contains('unwrapped')) return;
+    this.classList.remove('bobbing');
+    this.classList.add('popping');
+    this.classList.add('unwrapped');
+    document.getElementById('tap-hint').classList.remove('visible');
+
+    // Fire a second burst from the gift
+    fireBurst();
+
+    // Amount first
+    setTimeout(() => {
+      document.getElementById('amount-reveal').classList.add('visible');
+    }, 400);
+
+    // Secret word second
+    setTimeout(() => {
+      document.getElementById('word-reveal').classList.add('visible');
+    }, 1100);
+
+    // Message last
+    setTimeout(() => {
+      document.getElementById('reward-message').classList.add('visible');
+    }, 1800);
+  });
+
+  // ── Confetti burst ──
+  function fireBurst() {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    const burstColors = ['#f2d4c8','#f0d878','#a8bc9a','#c8b8d8','#d4896a','#fde8e0'];
+    for (let i = 0; i < 60; i++) {
+      const p = document.createElement('div');
+      p.className = 'burst-petal';
+      const size = 8 + Math.random() * 12;
+      const angle = Math.random() * 360;
+      const dist = 120 + Math.random() * 200;
+      const rad = angle * Math.PI / 180;
+      const tx = `translate(${Math.cos(rad)*dist}px, ${Math.sin(rad)*dist - 80}px)`;
+      p.style.cssText = `
+        left:${cx}px; top:${cy}px;
+        width:${size}px; height:${size*(0.5+Math.random()*0.8)}px;
+        background:${burstColors[Math.floor(Math.random()*burstColors.length)]};
+        --tx:${tx};
+        animation-duration:${0.8+Math.random()*0.8}s;
+        animation-delay:${Math.random()*0.2}s;
+        border-radius:${Math.random()>0.5?'50% 10% 50% 10%':'50%'};
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 2000);
+    }
+  }
+
+  // ── Shuffle utility ──
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ══════════════════════════════
+  // ADMIN
+  // ══════════════════════════════
+  let tapCount = 0, tapTimer = null;
+  const trigger    = document.getElementById('admin-trigger');
+  const tapCounter = document.getElementById('tap-counter');
+
+  trigger.addEventListener('click', () => {
+    tapCount++;
+    clearTimeout(tapTimer);
+    if (tapCount >= 3) {
+      tapCounter.style.opacity = '1';
+      tapCounter.textContent = `${5 - tapCount} more…`;
+    }
+    if (tapCount >= 5) {
+      tapCount = 0;
+      tapCounter.style.opacity = '0';
+      openAdmin();
+      return;
+    }
+    tapTimer = setTimeout(() => { tapCount = 0; tapCounter.style.opacity = '0'; }, 2500);
+  });
+
+  const overlay   = document.getElementById('admin-overlay');
+  const gate      = document.getElementById('admin-password-gate');
+  const form      = document.getElementById('admin-form');
+  const pwInput   = document.getElementById('admin-password-input');
+  const pwError   = document.getElementById('admin-password-error');
+  const savedNote = document.getElementById('admin-saved-note');
+
+  function openAdmin() {
+    gate.style.display = 'flex';
+    form.style.display = 'none';
+    pwInput.value = '';
+    pwError.textContent = '';
+    overlay.classList.add('open');
+    setTimeout(() => pwInput.focus(), 420);
+  }
+
+  function closeAdmin() { overlay.classList.remove('open'); }
+
+  function showForm() {
+    gate.style.display = 'none';
+    form.style.display = 'block';
+    document.getElementById('field-name').value   = state.name   || '';
+    document.getElementById('field-age').value    = state.age    || '';
+    document.getElementById('field-word').value   = state.word   || '';
+    document.getElementById('field-emoji').value  = state.emoji  || '';
+    document.getElementById('field-amount').value = state.amount || '';
+    savedNote.classList.remove('show');
+  }
+
+  document.getElementById('admin-password-btn').addEventListener('click', () => {
+    if (pwInput.value === ADMIN_PASSWORD) {
+      pwError.textContent = '';
+      showForm();
+    } else {
+      pwError.textContent = 'Not quite right — try again.';
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  });
+
+  pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-password-btn').click(); });
+
+  document.getElementById('admin-save-btn').addEventListener('click', () => {
+    state.name   = document.getElementById('field-name').value.trim();
+    state.age    = document.getElementById('field-age').value.trim();
+    state.word   = document.getElementById('field-word').value.trim();
+    state.emoji  = document.getElementById('field-emoji').value.trim();
+    state.amount = document.getElementById('field-amount').value.trim();
+    localStorage.setItem('birthdayPuzzle', JSON.stringify(state));
+    applyState();
+    savedNote.classList.add('show');
+    setTimeout(() => savedNote.classList.remove('show'), 3000);
+  });
+
+  document.getElementById('admin-cancel-btn').addEventListener('click', closeAdmin);
+  document.getElementById('admin-close-btn').addEventListener('click', closeAdmin);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeAdmin(); });
+</script>
+
+</body>
+</html>
