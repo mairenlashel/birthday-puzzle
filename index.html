@@ -200,44 +200,70 @@
      PUZZLE SCREEN
   ══════════════════════════════ */
   #screen-puzzle {
-    justify-content: flex-start;
-    padding: 36px 20px 24px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 24px;
+    overflow: hidden;
+  }
+
+  .puzzle-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
   }
 
   .puzzle-header {
-    width: 100%; max-width: 420px;
+    width: 100%;
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; flex-shrink: 0;
+    margin-bottom: 16px; flex-shrink: 0;
   }
+
+  .puzzle-back {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Quicksand', sans-serif; font-size: 0.8rem;
+    font-weight: 600; color: var(--brown-light);
+    letter-spacing: 0.06em; padding: 4px 0;
+    display: flex; align-items: center; gap: 5px;
+    -webkit-user-select: none; user-select: none;
+    transition: color 0.15s;
+  }
+  .puzzle-back:active { color: var(--rose); }
 
   .puzzle-theme-label {
     font-family: 'Playfair Display', serif; font-style: italic;
     font-size: 1.3rem; color: var(--brown);
   }
 
-  .puzzle-progress {
-    font-family: 'Quicksand', sans-serif; font-size: 0.8rem;
-    font-weight: 600; color: var(--brown-light);
-    letter-spacing: 0.1em;
+  /* Dot progress indicators */
+  .puzzle-dots {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .progress-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #e8d4bc;
+    border: 1.5px solid #d4b898;
+    transition: background 0.35s ease, border-color 0.35s ease, transform 0.25s ease;
+  }
+  .progress-dot.filled {
+    background: var(--sage);
+    border-color: var(--sage-dark);
+    transform: scale(1.18);
   }
 
-  /* Card grid */
+  /* Card grid — always 2 columns, 3 or 4 rows */
   .card-grid {
     display: grid;
-    gap: 12px;
-    width: 100%; max-width: 420px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
-  .card-grid.pairs-3 { grid-template-columns: repeat(3, 1fr); }
-  .card-grid.pairs-4 { grid-template-columns: repeat(4, 1fr); }
 
-  /* Individual card */
+  /* Individual card — size set dynamically via JS */
   .mem-card {
-    aspect-ratio: 1;
     cursor: pointer;
     perspective: 600px;
     -webkit-user-select: none; user-select: none;
+    flex-shrink: 0;
   }
 
   .mem-card-inner {
@@ -245,7 +271,7 @@
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
-    border-radius: 14px;
+    border-radius: 18px;
   }
 
   .mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
@@ -253,7 +279,7 @@
 
   .card-face {
     position: absolute; inset: 0;
-    border-radius: 14px;
+    border-radius: 18px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     display: flex; align-items: center; justify-content: center;
@@ -308,6 +334,32 @@
   .mem-card.matched .mem-card-inner {
     animation: matchPop 0.35s ease forwards;
   }
+
+  /* 3. Stagger entrance animation */
+  @keyframes cardEntrance {
+    from { opacity: 0; transform: translateY(14px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .mem-card { opacity: 0; }
+  .mem-card.entering {
+    animation: cardEntrance 0.32s ease forwards;
+  }
+
+  /* 5. Match sparkle overlay */
+  .card-sparkle {
+    position: absolute; inset: 0;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    transform: rotateY(180deg); /* sits on the front face plane */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: opacity 0.3s ease 0.2s;
+  }
+  .mem-card.matched .card-sparkle { opacity: 1; }
 
   /* ══════════════════════════════
      ADMIN PANEL
@@ -609,7 +661,7 @@
     <div class="subtitle">
       <svg width="18" height="16" viewBox="0 0 18 16" fill="none" style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:2px;">
         <path d="M9 14.5C9 14.5 1 9.5 1 4.5C1 2.5 2.5 1 4.5 1C6 1 7.5 2 9 3.5C10.5 2 12 1 13.5 1C15.5 1 17 2.5 17 4.5C17 9.5 9 14.5 9 14.5Z" fill="#fde8e0" stroke="#d4a890" stroke-width="1.2" stroke-linejoin="round"/>
-      </svg>Love, Muggins
+      </svg>Love, Auntie
     </div>
     <div class="dots">
       <div class="dot" style="background:#f2d4c8"></div>
@@ -677,11 +729,19 @@
      SCREEN 3 — PUZZLE
 ══════════════════════════════════════ -->
 <div class="screen" id="screen-puzzle">
-  <div class="puzzle-header">
-    <div class="puzzle-theme-label" id="puzzle-theme-label">Ocean</div>
-    <div class="puzzle-progress" id="puzzle-progress">0 / 3</div>
+  <div class="puzzle-layout" id="puzzle-layout">
+    <div class="puzzle-header" id="puzzle-header">
+      <button class="puzzle-back" id="puzzle-back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 2L4 7L9 12" stroke="#8a6a50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        back
+      </button>
+      <div class="puzzle-theme-label" id="puzzle-theme-label">Ocean</div>
+      <div class="puzzle-dots" id="puzzle-dots"></div>
+    </div>
+    <div class="card-grid" id="card-grid"></div>
   </div>
-  <div class="card-grid" id="card-grid"></div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -745,7 +805,7 @@
     </div>
 
     <div class="reward-message" id="reward-message">
-      Tell Mairen your secret word and she'll send your birthday money! 💛
+      Tell Auntie your secret word and she'll send your birthday money! 💛
     </div>
 
   </div>
@@ -888,6 +948,11 @@
     });
   });
 
+  // Back button — return to theme picker
+  document.getElementById('puzzle-back').addEventListener('click', () => {
+    showScreen('screen-theme');
+  });
+
   // ══════════════════════════════
   // PUZZLE ENGINE
   // ══════════════════════════════
@@ -903,9 +968,16 @@
     const age = parseInt(state.age) || 5;
     const pairCount = (age >= 6) ? 4 : 3;
 
-    // Label
+    // Label + progress dots
     document.getElementById('puzzle-theme-label').textContent = theme.label;
-    document.getElementById('puzzle-progress').textContent = `0 / ${pairCount}`;
+    const dotsEl = document.getElementById('puzzle-dots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < pairCount; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot';
+      dot.id = `dot-${i}`;
+      dotsEl.appendChild(dot);
+    }
 
     // Pick random pairs from bundle
     const pool = [...theme.emoji];
@@ -916,19 +988,47 @@
     const cards = [...chosen, ...chosen];
     shuffle(cards);
 
-    // Grid layout
     const grid = document.getElementById('card-grid');
-    grid.className = `card-grid pairs-${pairCount}`;
+    const layout = document.getElementById('puzzle-layout');
     grid.innerHTML = '';
 
-    // Reset state
+    // Reset puzzle state
     puzzleState = { pairs: pairCount, matched: 0, flipped: [], locked: false };
+
+    // ── Dynamic card sizing ──
+    // Available space: full screen minus vertical padding (28px × 2)
+    const GAP = 14;
+    const H_PAD = 48;  // 24px each side
+    const V_PAD = 56;  // 28px top + 28px bottom
+    const HEADER_H = 48; // approx header height + its margin-bottom
+
+    const availW = Math.min(window.innerWidth - H_PAD, 420);
+    const availH = window.innerHeight - V_PAD - HEADER_H;
+
+    // Width-constrained: 2 cols + 1 gap
+    const cardByW = Math.floor((availW - GAP) / 2);
+    // Height-constrained: pairCount rows + (pairCount - 1) gaps
+    const cardByH = Math.floor((availH - GAP * (pairCount - 1)) / pairCount);
+
+    const cardSize = Math.min(cardByW, cardByH, 200); // cap at 200px
+    const emojiSize = Math.floor(cardSize * 0.52);
+    const gridW = cardSize * 2 + GAP;
+
+    // Apply grid dimensions
+    grid.style.gridTemplateColumns = `repeat(2, ${cardSize}px)`;
+    grid.style.gridTemplateRows    = `repeat(${pairCount}, ${cardSize}px)`;
+    grid.style.gap = `${GAP}px`;
+
+    // Size the header to match grid width
+    document.getElementById('puzzle-header').style.width = `${gridW}px`;
 
     // Build cards
     cards.forEach(emoji => {
       const card = document.createElement('div');
       card.className = 'mem-card';
       card.dataset.emoji = emoji;
+      card.style.width  = `${cardSize}px`;
+      card.style.height = `${cardSize}px`;
       card.innerHTML = `
         <div class="mem-card-inner">
           <div class="card-face card-back">
@@ -958,7 +1058,7 @@
               <ellipse cx="90.5" cy="32" rx="2.5" ry="3.5" fill="#f5a030" opacity="0.8"/>
             </svg>
           </div>
-          <div class="card-face card-front">${emoji}</div>
+          <div class="card-face card-front" style="font-size:${emojiSize}px">${emoji}<div class="card-sparkle">✨</div></div>
         </div>
       `;
       card.addEventListener('click', () => onCardClick(card));
@@ -966,6 +1066,11 @@
     });
 
     showScreen('screen-puzzle');
+
+    // Stagger card entrance
+    grid.querySelectorAll('.mem-card').forEach((card, i) => {
+      setTimeout(() => card.classList.add('entering'), i * 45);
+    });
   }
 
   function onCardClick(card) {
@@ -998,9 +1103,9 @@
         puzzleState.flipped = [];
         puzzleState.locked = false;
 
-        // Update progress
-        document.getElementById('puzzle-progress').textContent =
-          `${puzzleState.matched} / ${puzzleState.pairs}`;
+        // Fill the next dot
+        const dot = document.getElementById(`dot-${puzzleState.matched - 1}`);
+        if (dot) dot.classList.add('filled');
 
         if (puzzleState.matched === puzzleState.pairs) {
           setTimeout(onPuzzleComplete, 600);
