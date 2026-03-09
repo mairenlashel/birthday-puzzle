@@ -601,16 +601,95 @@
     border-radius: 50%;
     animation: burst linear forwards;
   }
-  @keyframes burst {
-    0%   { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
-    100% { opacity: 0; transform: var(--tx) rotate(720deg) scale(0.4); }
+  /* ══════════════════════════════
+     AI ACKNOWLEDGEMENT
+  ══════════════════════════════ */
+  #ai-ack-btn {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 50;
+    background: none; border: none; cursor: pointer;
+    font-family: 'Quicksand', sans-serif; font-size: 0.65rem;
+    font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--brown-light); opacity: 0.55;
+    padding: 6px 12px;
+    transition: opacity 0.2s;
+    -webkit-user-select: none; user-select: none;
+    white-space: nowrap;
   }
+  #ai-ack-btn:active { opacity: 0.9; }
+
+  #ai-ack-overlay {
+    position: fixed; inset: 0;
+    background: rgba(90, 62, 43, 0.4);
+    z-index: 300;
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #ai-ack-overlay.open { opacity: 1; pointer-events: all; }
+
+  #ai-ack-panel {
+    background: var(--warm-white);
+    border-radius: 28px 28px 0 0;
+    padding: 32px 28px 52px;
+    width: 100%; max-width: 480px;
+    max-height: 80vh; overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.1, 0.64, 1);
+    box-shadow: 0 -8px 32px rgba(90,62,43,0.12);
+  }
+  #ai-ack-overlay.open #ai-ack-panel { transform: translateY(0); }
+
+  .ai-ack-handle { width: 40px; height: 4px; background: #e8d4bc; border-radius: 2px; margin: 0 auto 24px; }
+
+  .ai-ack-title {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+    font-size: 1.2rem; color: var(--brown);
+    margin-bottom: 18px; text-align: center;
+  }
+
+  .ai-ack-body {
+    font-family: 'Quicksand', sans-serif; font-size: 0.9rem;
+    color: var(--brown-light); line-height: 1.75;
+  }
+  .ai-ack-body p + p { margin-top: 14px; }
+  .ai-ack-body em {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    color: var(--brown); font-size: 0.95rem;
+  }
+
+  .ai-ack-close {
+    width: 100%; padding: 14px; margin-top: 24px;
+    background: transparent; color: var(--brown-light);
+    border: 1.5px solid #e8d4bc; border-radius: 100px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .ai-ack-close:active { border-color: var(--rose); color: var(--rose); }
 </style>
 </head>
 <body>
 
 <div class="confetti-wrap" id="confetti"></div>
 <div class="frame"></div>
+
+<button id="ai-ack-btn">AI Acknowledgement</button>
+
+<!-- AI ACKNOWLEDGEMENT MODAL -->
+<div id="ai-ack-overlay">
+  <div id="ai-ack-panel">
+    <div class="ai-ack-handle"></div>
+    <div class="ai-ack-title">A Note on How This Was Made</div>
+    <div class="ai-ack-body">
+      <p>This birthday puzzle was built with the help of AI tools — specifically, Claude assisted me in writing the code that powers it.</p>
+      <p>I want to be transparent about that, and also about the care I put into the decisions that AI <em>didn't</em> make for me.</p>
+      <p>I thought carefully about our babies who would use this. No personal information about them is collected, stored, or transmitted anywhere, and any details about them (like their name and age) live only in that moment and in that link. I chose themes, difficulty levels, and a reward structure with their ages and attention spans in mind. The aesthetic was a deliberate choice away from the overstimulating, attention-engineered design patterns that dominate children's digital experiences. I made something that felt quieter, warmer, and more like a handmade gift from their Auntie, who loves them.</p>
+      <p>The love behind this is mine. I just needed help with the code.</p>
+    </div>
+    <button class="ai-ack-close" id="ai-ack-close">Close</button>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════
      SCREEN 1 — LANDING
@@ -661,7 +740,7 @@
     <div class="subtitle">
       <svg width="18" height="16" viewBox="0 0 18 16" fill="none" style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:2px;">
         <path d="M9 14.5C9 14.5 1 9.5 1 4.5C1 2.5 2.5 1 4.5 1C6 1 7.5 2 9 3.5C10.5 2 12 1 13.5 1C15.5 1 17 2.5 17 4.5C17 9.5 9 14.5 9 14.5Z" fill="#fde8e0" stroke="#d4a890" stroke-width="1.2" stroke-linejoin="round"/>
-      </svg>Love, Muggins
+      </svg>Love, Auntie
     </div>
     <div class="dots">
       <div class="dot" style="background:#f2d4c8"></div>
@@ -805,7 +884,7 @@
     </div>
 
     <div class="reward-message" id="reward-message">
-      Tell Mairen your secret word and she'll send your birthday money! 💛
+      Tell Auntie your secret word and she'll send your birthday money! 💛
     </div>
 
   </div>
@@ -1319,6 +1398,11 @@
   document.getElementById('admin-cancel-btn').addEventListener('click', closeAdmin);
   document.getElementById('admin-close-btn').addEventListener('click', closeAdmin);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeAdmin(); });
+  // ── AI Acknowledgement ──
+  const aiOverlay = document.getElementById('ai-ack-overlay');
+  document.getElementById('ai-ack-btn').addEventListener('click', () => aiOverlay.classList.add('open'));
+  document.getElementById('ai-ack-close').addEventListener('click', () => aiOverlay.classList.remove('open'));
+  aiOverlay.addEventListener('click', e => { if (e.target === aiOverlay) aiOverlay.classList.remove('open'); });
 </script>
 
 </body>
